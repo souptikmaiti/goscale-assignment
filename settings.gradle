@@ -1,0 +1,2 @@
+rootProject.name='GoScaleAssignment'
+include ':app'
