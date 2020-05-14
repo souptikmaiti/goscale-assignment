@@ -3,7 +3,7 @@ package com.souptik.maiti.goscaleassignment.di
 import javax.inject.Qualifier
 
 @Qualifier
-@Retention(AnnotationRetention.BINARY)
+@Retention(AnnotationRetention.SOURCE)
 annotation class ApplicationContext
 
 @Qualifier

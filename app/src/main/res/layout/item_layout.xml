@@ -2,11 +2,8 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginTop="15dp"
-    android:layout_marginBottom="15dp"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp">
+    android:elevation="4dp"
+    android:layout_marginBottom="6dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -16,14 +13,15 @@
         <ImageView
             android:id="@+id/iv_poster"
             android:layout_width="match_parent"
-            android:layout_height="200dp" />
+            android:layout_height="150dp" />
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tv_title"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:text="Movie name"
+            android:layout_centerHorizontal="true"
             android:textColor="@android:color/black"
             android:layout_below="@+id/iv_poster"/>
 
@@ -31,8 +29,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tv_year"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:text="Movie year"
+            android:layout_centerHorizontal="true"
             android:layout_below="@+id/tv_title"/>
 
     </RelativeLayout>

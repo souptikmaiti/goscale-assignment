@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.souptik.maiti.goscaleassignment.BuildConfig
 import com.souptik.maiti.goscaleassignment.GoScaleApplication
+import com.souptik.maiti.goscaleassignment.data.local.database.DatabaseMovies
 import com.souptik.maiti.goscaleassignment.data.remote.NetworkApiKeyInterceptor
 import com.souptik.maiti.goscaleassignment.data.remote.NetworkService
 import com.souptik.maiti.goscaleassignment.data.remote.Networking
@@ -46,5 +47,10 @@ class ApplicationModule(private val application: GoScaleApplication) {
             cacheSize = 10 * 1024 * 1024, // 10MB
             interceptor = networkApiKeyInterceptor
         )
+
+    @Provides
+    @Singleton
+    fun provideDatabase(): DatabaseMovies =
+        DatabaseMovies(application)
 
 }

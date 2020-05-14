@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.souptik.maiti.goscaleassignment.R
 import com.souptik.maiti.goscaleassignment.di.components.FragmentComponent
+import com.souptik.maiti.goscaleassignment.ui.adapter.MovieBookmarkAdapter
 import com.souptik.maiti.goscaleassignment.ui.adapter.MoviePagedListAdapter
 import com.souptik.maiti.goscaleassignment.ui.adapter.MovieSelectListener
 import com.souptik.maiti.goscaleassignment.ui.base.BaseFragment
@@ -24,6 +25,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_home.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.inject.Named
 
 class HomeFragment : BaseFragment<HomeViewModel>(), MovieSelectListener {
 
@@ -39,10 +41,18 @@ class HomeFragment : BaseFragment<HomeViewModel>(), MovieSelectListener {
     }
 
     @Inject
+    @field:Named("Vertical")
     lateinit var linearLayoutManager: LinearLayoutManager
 
     @Inject
+    @field:Named("Horizontal")
+    lateinit var horizontalLinearLayoutManager: LinearLayoutManager
+
+    @Inject
     lateinit var movieAdapter: MoviePagedListAdapter
+
+    @Inject
+    lateinit var bookmarkAdapter: MovieBookmarkAdapter
 
     @Inject
     lateinit var compositeDisposable: CompositeDisposable
@@ -60,6 +70,11 @@ class HomeFragment : BaseFragment<HomeViewModel>(), MovieSelectListener {
         rv_items.setHasFixedSize(true)
         rv_items.adapter = movieAdapter
         movieAdapter.movieSelectListener = this
+
+        rv_bookmarks.layoutManager = horizontalLinearLayoutManager
+        rv_bookmarks.setHasFixedSize(true)
+        rv_bookmarks.adapter = bookmarkAdapter
+
     }
 
     override fun setupObservers() {
@@ -67,6 +82,12 @@ class HomeFragment : BaseFragment<HomeViewModel>(), MovieSelectListener {
         viewModel.moviePagedList.observe(this, Observer {
             if (it != null) {
                 movieAdapter.submitList(it)
+            }
+        })
+
+        viewModel.getAllBookmarkedMovies().observe(this, Observer {
+            if(it != null) {
+                bookmarkAdapter.refreshData(it)
             }
         })
     }
