@@ -7,6 +7,7 @@ import com.souptik.maiti.goscaleassignment.data.local.entities.MovieBookmark
 import com.souptik.maiti.goscaleassignment.data.remote.response.MovieDetails
 import com.souptik.maiti.goscaleassignment.data.repository.MovieRepository
 import com.souptik.maiti.goscaleassignment.ui.base.BaseViewModel
+import com.souptik.maiti.goscaleassignment.utils.Resource
 import com.souptik.maiti.goscaleassignment.utils.RxSchedulerProviders
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.*
@@ -15,26 +16,36 @@ class DetailsViewModel(schedulerProvider: RxSchedulerProviders,
                        compositeDisposable: CompositeDisposable,
                        private val movieRepository: MovieRepository) : BaseViewModel(schedulerProvider, compositeDisposable) {
 
-    val movieDetails: LiveData<MovieDetails>
+    val movieDetails: LiveData<Resource<MovieDetails>>
         get() = _movieDetails
 
-    private val _movieDetails: MutableLiveData<MovieDetails> = MutableLiveData()
+    private val _movieDetails: MutableLiveData<Resource<MovieDetails>> = MutableLiveData()
+
+    val bookmarkAdded: LiveData<Boolean>
+        get() = _bookmarkAdded
+
+    val bookmarkDeleted: LiveData<Boolean>
+        get() = _bookmarkDeleted
+
+    private var _bookmarkAdded: MutableLiveData<Boolean> = MutableLiveData()
+    private var _bookmarkDeleted: MutableLiveData<Boolean> = MutableLiveData()
 
     override fun onCreate() {
 
     }
 
     fun getMovieDetails(movieId: String){
+        _movieDetails.postValue(Resource.loading(null))
         compositeDisposable.addAll(
             movieRepository.getMovieDetails(movieId)
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
                 .subscribe(
                     {
-                        _movieDetails.postValue(it)
+                        _movieDetails.postValue(Resource.success(it))
                     },
                     {
-
+                        _movieDetails.postValue(Resource.error(null, it.message.toString()))
                     }
                 )
         )
@@ -47,8 +58,12 @@ class DetailsViewModel(schedulerProvider: RxSchedulerProviders,
                 var idList = movieRepository.getAllMovieIds()
                 if(!idList.isNullOrEmpty() && idList.contains(movieBookmark.imdbID)){
                     movieRepository.deleteBookmarkedMovieById(movieBookmark.imdbID)
+                    _bookmarkAdded.postValue(false)
+                    _bookmarkDeleted.postValue(true)
                 }else {
                     movieRepository.saveBookmarkedMovie(movieBookmark)
+                    _bookmarkAdded.postValue(true)
+                    _bookmarkDeleted.postValue(false)
                 }
             }
 

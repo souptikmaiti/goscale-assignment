@@ -1,6 +1,7 @@
 package com.souptik.maiti.goscaleassignment.ui.detail
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
@@ -9,7 +10,12 @@ import com.souptik.maiti.goscaleassignment.data.local.entities.MovieBookmark
 import com.souptik.maiti.goscaleassignment.data.remote.response.MovieDetails
 import com.souptik.maiti.goscaleassignment.di.components.FragmentComponent
 import com.souptik.maiti.goscaleassignment.ui.base.BaseFragment
+import com.souptik.maiti.goscaleassignment.ui.home.MainActivity
+import com.souptik.maiti.goscaleassignment.ui.home.MainActivity.Companion.DETAILS_TITLE
+import com.souptik.maiti.goscaleassignment.ui.home.MainActivity.Companion.HOME_TITLE
 import com.souptik.maiti.goscaleassignment.ui.home.MainActivity.Companion.IMDB_ID
+import com.souptik.maiti.goscaleassignment.utils.Status
+import com.souptik.maiti.goscaleassignment.utils.Toaster
 import kotlinx.android.synthetic.main.fragment_details.*
 
 
@@ -18,7 +24,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
     companion object {
         const val TAG = "DetailsFragment"
 
-        fun newInstance(bundle: Bundle): DetailsFragment {
+        fun newInstance(bundle: Bundle?): DetailsFragment {
             val fragment = DetailsFragment()
             fragment.arguments = bundle
             return fragment
@@ -44,9 +50,36 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
         }
 
         viewModel.movieDetails.observe(this, Observer {
-            movieDetails = it
-            setMovieBookmark(it)
-            refreshView(it)
+            when(it.status){
+                Status.LOADING ->{
+                    progressBar.visibility = View.VISIBLE
+                }
+                Status.SUCCESS ->{
+                    progressBar.visibility = View.GONE
+                    if(it.data != null) {
+                        movieDetails = it.data
+                        setMovieBookmark(it.data)
+                        refreshView(it.data)
+                    }
+                }
+                Status.ERROR ->{
+                    progressBar.visibility = View.GONE
+                    Toaster.showLong(context!!, it.msg!!)
+                }
+            }
+
+        })
+
+        viewModel.bookmarkAdded.observe(this, Observer {
+            if(it){
+                Toaster.showShort(context!!, "Bookmark Added")
+            }
+        })
+
+        viewModel.bookmarkDeleted.observe(this, Observer {
+            if(it){
+                Toaster.showShort(context!!, "Bookmark Deleted")
+            }
         })
     }
 
@@ -66,6 +99,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
     }
 
     override fun setupView(view: View) {
+        (activity as MainActivity).title = DETAILS_TITLE
         if(imdbId != null) {
             viewModel.getMovieDetails(imdbId!!)
         }
@@ -75,6 +109,11 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
             }
             //return@setOnLongClickListener true
         }
+    }
+
+    override fun onDestroy() {
+        (activity as MainActivity).title = HOME_TITLE
+        super.onDestroy()
     }
 
 }

@@ -17,6 +17,7 @@ import com.souptik.maiti.goscaleassignment.ui.adapter.MovieBookmarkAdapter
 import com.souptik.maiti.goscaleassignment.ui.adapter.MoviePagedListAdapter
 import com.souptik.maiti.goscaleassignment.ui.adapter.MovieSelectListener
 import com.souptik.maiti.goscaleassignment.ui.base.BaseFragment
+import com.souptik.maiti.goscaleassignment.utils.Status
 import com.souptik.maiti.goscaleassignment.utils.Toaster
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -34,10 +35,9 @@ class HomeFragment : BaseFragment<HomeViewModel>(), MovieSelectListener, Bookmar
     companion object {
         const val TAG = "HomeFragment"
 
-        fun newInstance(): HomeFragment {
-            val args = Bundle()
+        fun newInstance(bundle: Bundle?): HomeFragment {
             val fragment = HomeFragment()
-            fragment.arguments = args
+            fragment.arguments = bundle
             return fragment
         }
     }
@@ -66,6 +66,9 @@ class HomeFragment : BaseFragment<HomeViewModel>(), MovieSelectListener, Bookmar
     }
 
     override fun setupView(view: View) {
+
+        (activity as MainActivity).title = MainActivity.HOME_TITLE
+
         viewModel.setSearchString("friends")
         setHasOptionsMenu(true)
         rv_items.layoutManager = linearLayoutManager
@@ -105,6 +108,21 @@ class HomeFragment : BaseFragment<HomeViewModel>(), MovieSelectListener, Bookmar
         viewModel.bookmarkDeleted.observe(this, Observer {
             if(it){
                 Toaster.showShort(context!!, "Bookmark Deleted")
+            }
+        })
+
+        viewModel.progressLiveData.observe(this, Observer {
+            when(it.status){
+                Status.LOADING ->{
+                    progressBar.visibility = View.VISIBLE
+                }
+                Status.SUCCESS ->{
+                    progressBar.visibility = View.GONE
+                }
+                Status.ERROR ->{
+                    progressBar.visibility = View.GONE
+                    Toaster.showLong(context!!, it.msg!!)
+                }
             }
         })
     }

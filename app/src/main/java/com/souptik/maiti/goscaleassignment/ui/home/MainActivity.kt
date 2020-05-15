@@ -14,6 +14,8 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
     companion object{
         val IMDB_ID = "IMDB_ID"
+        val HOME_TITLE = "Movies List with Bookmarks"
+        val DETAILS_TITLE = "Movie Details"
     }
 
     private var activeFragmentt: Fragment? =null
@@ -30,7 +32,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
     private fun addHomeFragment() {
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.fragment_container, HomeFragment.newInstance(), HomeFragment.TAG)
+        fragmentTransaction.add(R.id.fragment_container, HomeFragment.newInstance(null), HomeFragment.TAG)
         fragmentTransaction.commit()
     }
 

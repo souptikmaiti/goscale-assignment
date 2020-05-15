@@ -10,6 +10,7 @@ import com.souptik.maiti.goscaleassignment.data.remote.response.Movie
 import com.souptik.maiti.goscaleassignment.data.repository.MovieRepository
 import com.souptik.maiti.goscaleassignment.paging.MoviePagedListRepository
 import com.souptik.maiti.goscaleassignment.ui.base.BaseViewModel
+import com.souptik.maiti.goscaleassignment.utils.Resource
 import com.souptik.maiti.goscaleassignment.utils.RxSchedulerProviders
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +27,8 @@ class HomeViewModel(schedulerProvider: RxSchedulerProviders,
 
     var moviePagedList: LiveData<PagedList<Movie>>  = Transformations.switchMap(filterText, ::processData)
 
+    var progressLiveData: LiveData<Resource<String>> = Transformations.switchMap(filterText, ::getNetworkState)
+
     val bookmarkAdded: LiveData<Boolean>
         get() = _bookmarkAdded
 
@@ -35,8 +38,12 @@ class HomeViewModel(schedulerProvider: RxSchedulerProviders,
     private var _bookmarkAdded: MutableLiveData<Boolean> = MutableLiveData()
     private var _bookmarkDeleted: MutableLiveData<Boolean> = MutableLiveData()
 
-    fun processData(str: String):LiveData<PagedList<Movie>>{
+    private fun processData(str: String):LiveData<PagedList<Movie>>{
         return moviePagedListRepository.fetchMoviePagedList(str)
+    }
+
+    private fun getNetworkState(str: String): LiveData<Resource<String>>{
+        return moviePagedListRepository.getNetworkState()
     }
 
 
