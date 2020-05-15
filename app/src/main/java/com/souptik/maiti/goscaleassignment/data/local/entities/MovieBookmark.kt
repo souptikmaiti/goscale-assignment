@@ -7,18 +7,17 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "movies_table")
 data class MovieBookmark (
-    @ColumnInfo(name = "name")
-    @NonNull
-    val name: String,
 
+    @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "imbd_id")
     @NonNull
     val imdbID: String,
 
+    @ColumnInfo(name = "name")
+    @NonNull
+    val name: String,
+
     @ColumnInfo(name = "image_url")
     @NonNull
     val imageUrl: String
-){
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0
-}
+)

@@ -43,6 +43,21 @@
         app:layout_constraintLeft_toRightOf="@+id/guidelineLeft"
         app:layout_constraintRight_toLeftOf="@+id/guidelineRight" />
 
+    <ImageView
+        android:id="@+id/iv_bookmark"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:elevation="10dp"
+        android:src="@drawable/ic_favorite"
+        android:clickable="true"
+        app:layout_constraintLeft_toRightOf="@+id/guidelineLeft"
+        app:layout_constraintRight_toLeftOf="@+id/guidelineRight"
+        app:layout_constraintTop_toBottomOf="@+id/guidelineUp"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineDown"
+        app:layout_constraintHorizontal_bias=".8"
+        app:layout_constraintVertical_bias=".7"
+        />
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"

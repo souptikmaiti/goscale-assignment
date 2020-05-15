@@ -11,10 +11,32 @@ import kotlinx.android.synthetic.main.bookmark_layout.view.*
 
 class MovieBookmarkAdapter(private val bookMarkedList: ArrayList<MovieBookmark>): RecyclerView.Adapter<MovieBookmarkAdapter.BookmarkViewHolder>() {
 
+    var bookmarkListener: BookmarkSelectListener ?= null
+    var movieSelectListener: MovieSelectListener? = null
+
     inner class BookmarkViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         fun bind(movieBookmark: MovieBookmark){
             itemView.tv_title.text = movieBookmark.name
             Glide.with(itemView).load(movieBookmark.imageUrl).into(itemView.iv_movie)
+
+            itemView.rl_book.setOnClickListener {
+                if(movieSelectListener != null){
+                    movieSelectListener!!.selectMovie(movieBookmark.imdbID)
+                }
+            }
+
+            itemView.iv_cancel.setOnClickListener {
+                if(bookmarkListener != null){
+                    bookmarkListener!!.toggleBookmark(movieBookmark)
+                }
+            }
+
+            itemView.rl_book.setOnLongClickListener {
+                if(bookmarkListener != null){
+                    bookmarkListener!!.toggleBookmark(movieBookmark)
+                }
+                return@setOnLongClickListener true
+            }
         }
     }
 

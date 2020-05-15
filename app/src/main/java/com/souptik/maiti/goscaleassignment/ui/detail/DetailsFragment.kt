@@ -1,13 +1,9 @@
 package com.souptik.maiti.goscaleassignment.ui.detail
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
-
 import com.souptik.maiti.goscaleassignment.R
 import com.souptik.maiti.goscaleassignment.data.local.entities.MovieBookmark
 import com.souptik.maiti.goscaleassignment.data.remote.response.MovieDetails
@@ -73,11 +69,11 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
         if(imdbId != null) {
             viewModel.getMovieDetails(imdbId!!)
         }
-        iv_movie.setOnLongClickListener {
-            if (movieBookmark != null) {
-                viewModel.saveBookmarkedMovie(movieBookmark!!)
+        iv_bookmark.setOnClickListener {
+            if(movieBookmark != null) {
+                viewModel.toggleBookmark(movieBookmark!!)
             }
-            return@setOnLongClickListener true
+            //return@setOnLongClickListener true
         }
     }
 

@@ -25,6 +25,10 @@ class MovieRepository @Inject constructor(private val networkService: NetworkSer
 
     suspend fun deleteBookmarkedMovie(movieBookmark: MovieBookmark) = movieDao.deleteMovie(movieBookmark)
 
+    suspend fun deleteBookmarkedMovieById(movieId: String) = movieDao.deleteRecord(movieId)
+
+    suspend fun getAllMovieIds() = movieDao.getAllIds()
+
     fun getAllBookmarkedMovies() = movieDao.getAllMovies()
 
 }

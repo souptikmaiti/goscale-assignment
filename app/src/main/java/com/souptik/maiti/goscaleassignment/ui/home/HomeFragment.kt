@@ -10,7 +10,9 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.souptik.maiti.goscaleassignment.R
+import com.souptik.maiti.goscaleassignment.data.local.entities.MovieBookmark
 import com.souptik.maiti.goscaleassignment.di.components.FragmentComponent
+import com.souptik.maiti.goscaleassignment.ui.adapter.BookmarkSelectListener
 import com.souptik.maiti.goscaleassignment.ui.adapter.MovieBookmarkAdapter
 import com.souptik.maiti.goscaleassignment.ui.adapter.MoviePagedListAdapter
 import com.souptik.maiti.goscaleassignment.ui.adapter.MovieSelectListener
@@ -27,7 +29,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
 
-class HomeFragment : BaseFragment<HomeViewModel>(), MovieSelectListener {
+class HomeFragment : BaseFragment<HomeViewModel>(), MovieSelectListener, BookmarkSelectListener {
 
     companion object {
         const val TAG = "HomeFragment"
@@ -70,10 +72,13 @@ class HomeFragment : BaseFragment<HomeViewModel>(), MovieSelectListener {
         rv_items.setHasFixedSize(true)
         rv_items.adapter = movieAdapter
         movieAdapter.movieSelectListener = this
+        movieAdapter.bookmarkListener = this
 
         rv_bookmarks.layoutManager = horizontalLinearLayoutManager
         rv_bookmarks.setHasFixedSize(true)
         rv_bookmarks.adapter = bookmarkAdapter
+        bookmarkAdapter.bookmarkListener = this
+        bookmarkAdapter.movieSelectListener = this
 
     }
 
@@ -90,16 +95,32 @@ class HomeFragment : BaseFragment<HomeViewModel>(), MovieSelectListener {
                 bookmarkAdapter.refreshData(it)
             }
         })
+
+        viewModel.bookmarkAdded.observe(this, Observer {
+            if(it){
+                Toaster.showShort(context!!, "Bookmark Added")
+            }
+        })
+
+        viewModel.bookmarkDeleted.observe(this, Observer {
+            if(it){
+                Toaster.showShort(context!!, "Bookmark Deleted")
+            }
+        })
     }
 
     override fun selectMovie(imdbId: String) {
         (activity as MainActivity).viewModel.setMovieId(imdbId)
     }
 
+    override fun toggleBookmark(movieBookmark: MovieBookmark) {
+        viewModel.toggleBookmark(movieBookmark)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.goscale_menu, menu)
-        var searchItem = menu.findItem(R.id.search_menu)
-        var searchView = searchItem.actionView as SearchView
+        val searchItem = menu.findItem(R.id.search_menu)
+        val searchView = searchItem.actionView as SearchView
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE)
 
         compositeDisposable.addAll(Observable.create(

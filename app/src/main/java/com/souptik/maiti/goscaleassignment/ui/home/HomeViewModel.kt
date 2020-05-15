@@ -1,6 +1,5 @@
 package com.souptik.maiti.goscaleassignment.ui.home
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -12,7 +11,6 @@ import com.souptik.maiti.goscaleassignment.data.repository.MovieRepository
 import com.souptik.maiti.goscaleassignment.paging.MoviePagedListRepository
 import com.souptik.maiti.goscaleassignment.ui.base.BaseViewModel
 import com.souptik.maiti.goscaleassignment.utils.RxSchedulerProviders
-import com.souptik.maiti.goscaleassignment.utils.Toaster
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,6 +26,15 @@ class HomeViewModel(schedulerProvider: RxSchedulerProviders,
 
     var moviePagedList: LiveData<PagedList<Movie>>  = Transformations.switchMap(filterText, ::processData)
 
+    val bookmarkAdded: LiveData<Boolean>
+        get() = _bookmarkAdded
+
+    val bookmarkDeleted: LiveData<Boolean>
+        get() = _bookmarkDeleted
+
+    private var _bookmarkAdded: MutableLiveData<Boolean> = MutableLiveData()
+    private var _bookmarkDeleted: MutableLiveData<Boolean> = MutableLiveData()
+
     fun processData(str: String):LiveData<PagedList<Movie>>{
         return moviePagedListRepository.fetchMoviePagedList(str)
     }
@@ -41,22 +48,22 @@ class HomeViewModel(schedulerProvider: RxSchedulerProviders,
         filterText.postValue(str)
     }
 
-    fun saveBookmarkedMovie(movieBookmark: MovieBookmark){
+    fun toggleBookmark(movieBookmark: MovieBookmark){
         // Coroutine that will be canceled when the ViewModel is cleared.
         viewModelScope.launch {
             withContext(Dispatchers.IO){
-                movieRepository.saveBookmarkedMovie(movieBookmark)
+                var idList = movieRepository.getAllMovieIds()
+                if(!idList.isNullOrEmpty() && idList.contains(movieBookmark.imdbID)){
+                    movieRepository.deleteBookmarkedMovieById(movieBookmark.imdbID)
+                    _bookmarkAdded.postValue(false)
+                    _bookmarkDeleted.postValue(true)
+                }else {
+                    movieRepository.saveBookmarkedMovie(movieBookmark)
+                    _bookmarkAdded.postValue(true)
+                    _bookmarkDeleted.postValue(false)
+                }
             }
 
-        }
-    }
-
-    fun deleteBookmarkedMovie(movieBookmark: MovieBookmark){
-        // Coroutine that will be canceled when the ViewModel is cleared.
-        viewModelScope.launch {
-            withContext(Dispatchers.IO){
-                movieRepository.deleteBookmarkedMovie(movieBookmark)
-            }
         }
     }
 

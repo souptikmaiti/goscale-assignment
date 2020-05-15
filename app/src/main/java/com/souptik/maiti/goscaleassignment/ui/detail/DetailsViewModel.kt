@@ -9,9 +9,7 @@ import com.souptik.maiti.goscaleassignment.data.repository.MovieRepository
 import com.souptik.maiti.goscaleassignment.ui.base.BaseViewModel
 import com.souptik.maiti.goscaleassignment.utils.RxSchedulerProviders
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class DetailsViewModel(schedulerProvider: RxSchedulerProviders,
                        compositeDisposable: CompositeDisposable,
@@ -42,22 +40,18 @@ class DetailsViewModel(schedulerProvider: RxSchedulerProviders,
         )
     }
 
-    fun saveBookmarkedMovie(movieBookmark: MovieBookmark){
+    fun toggleBookmark(movieBookmark: MovieBookmark){
         // Coroutine that will be canceled when the ViewModel is cleared.
         viewModelScope.launch {
             withContext(Dispatchers.IO){
-                movieRepository.saveBookmarkedMovie(movieBookmark)
+                var idList = movieRepository.getAllMovieIds()
+                if(!idList.isNullOrEmpty() && idList.contains(movieBookmark.imdbID)){
+                    movieRepository.deleteBookmarkedMovieById(movieBookmark.imdbID)
+                }else {
+                    movieRepository.saveBookmarkedMovie(movieBookmark)
+                }
             }
 
-        }
-    }
-
-    fun deleteBookmarkedMovie(movieBookmark: MovieBookmark){
-        // Coroutine that will be canceled when the ViewModel is cleared.
-        viewModelScope.launch {
-            withContext(Dispatchers.IO){
-                movieRepository.deleteBookmarkedMovie(movieBookmark)
-            }
         }
     }
 

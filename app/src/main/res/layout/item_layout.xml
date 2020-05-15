@@ -11,28 +11,51 @@
         android:padding="10dp">
 
         <ImageView
-            android:id="@+id/iv_poster"
-            android:layout_width="match_parent"
-            android:layout_height="150dp" />
+            android:id="@+id/iv_fav"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_favorite"
+            android:layout_toRightOf="@+id/rl_movie"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
+            android:elevation="10dp"
+            android:clickable="true"/>
 
-        <com.google.android.material.textview.MaterialTextView
+
+        <RelativeLayout
+            android:id="@+id/rl_movie"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_title"
-            android:textSize="16sp"
-            android:text="Movie name"
-            android:layout_centerHorizontal="true"
-            android:textColor="@android:color/black"
-            android:layout_below="@+id/iv_poster"/>
+            android:layout_centerHorizontal="true">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_year"
-            android:textSize="14sp"
-            android:text="Movie year"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/tv_title"/>
+            <ImageView
+                android:id="@+id/iv_poster"
+                android:layout_width="200dp"
+                android:layout_height="150dp" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_title"
+                android:textSize="16sp"
+                android:text="Movie name"
+                android:maxLines="1"
+                android:maxWidth="200dp"
+                android:ellipsize="end"
+                android:layout_centerHorizontal="true"
+                android:textColor="@android:color/black"
+                android:layout_below="@+id/iv_poster"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_year"
+                android:textSize="14sp"
+                android:text="Movie year"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/tv_title"/>
+        </RelativeLayout>
+
 
     </RelativeLayout>
 
