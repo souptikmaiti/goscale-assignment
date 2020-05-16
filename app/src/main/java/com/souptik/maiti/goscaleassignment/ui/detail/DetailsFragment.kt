@@ -1,7 +1,6 @@
 package com.souptik.maiti.goscaleassignment.ui.detail
 
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
@@ -32,10 +31,8 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
     }
 
     var imdbId: String? = null
-
     var movieDetails: MovieDetails ?= null
     var movieBookmark: MovieBookmark ?= null
-
     override fun provideLayoutId(): Int = R.layout.fragment_details
 
     override fun injectDependencies(fragmentComponent: FragmentComponent) {
@@ -100,14 +97,26 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
 
     override fun setupView(view: View) {
         (activity as MainActivity).title = DETAILS_TITLE
-        if(imdbId != null) {
-            viewModel.getMovieDetails(imdbId!!)
-        }
-        iv_bookmark.setOnClickListener {
-            if(movieBookmark != null) {
-                viewModel.toggleBookmark(movieBookmark!!)
+
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if(savedInstanceState == null){
+            if(imdbId != null) {
+                viewModel.getMovieDetails(imdbId!!)
             }
-            //return@setOnLongClickListener true
+            iv_bookmark.setOnClickListener {
+                if(movieBookmark != null) {
+                    viewModel.toggleBookmark(movieBookmark!!)
+                }
+            }
+        }else{
+            iv_bookmark.setOnClickListener {
+                if(movieBookmark != null) {
+                    viewModel.toggleBookmark(movieBookmark!!)
+                }
+            }
         }
     }
 

@@ -38,6 +38,9 @@ class MovieDataSource @Inject constructor(private val repo: MovieRepository, pri
                             callback.onResult(it.movieList, null, page + 1)
                             networkState.postValue(Resource.success(NETWORKSTATE))
                         }
+                        if(it.response == "False"){
+                            networkState.postValue(Resource.noData(NETWORKSTATE))
+                        }
                     },
                     {
                         networkState.postValue(Resource.error(NETWORKSTATE, it.message.toString()))
@@ -59,7 +62,12 @@ class MovieDataSource @Inject constructor(private val repo: MovieRepository, pri
                             if (it.totalResults > (params.key * POSTS_PER_PAGE)) {
                                 callback.onResult(it.movieList, params.key + 1)
                                 networkState.postValue(Resource.success(NETWORKSTATE))
+                            }else{
+                                networkState.postValue(Resource.reachEnd(NETWORKSTATE))
                             }
+                        }
+                        if(it.response == "False"){
+                            networkState.postValue(Resource.noData(NETWORKSTATE))
                         }
                     },
                     {

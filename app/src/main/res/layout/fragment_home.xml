@@ -82,4 +82,18 @@
         app:layout_constraintRight_toLeftOf="@+id/guidelineRight"
         app:layout_constraintBottom_toTopOf="@+id/guidelineDown"/>
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Status"
+        android:textSize="20sp"
+        android:textColor="@android:color/black"
+        app:layout_constraintLeft_toRightOf="@+id/guidelineLeft"
+        app:layout_constraintRight_toLeftOf="@+id/guidelineRight"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineDown"
+        app:layout_constraintTop_toBottomOf="@+id/guidelineMid"
+        app:layout_constraintVertical_bias=".95"
+        android:visibility="gone"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

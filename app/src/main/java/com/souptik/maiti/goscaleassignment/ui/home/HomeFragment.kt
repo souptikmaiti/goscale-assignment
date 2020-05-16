@@ -1,7 +1,6 @@
 package com.souptik.maiti.goscaleassignment.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
@@ -21,7 +20,6 @@ import com.souptik.maiti.goscaleassignment.utils.Status
 import com.souptik.maiti.goscaleassignment.utils.Toaster
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -66,10 +64,20 @@ class HomeFragment : BaseFragment<HomeViewModel>(), MovieSelectListener, Bookmar
     }
 
     override fun setupView(view: View) {
-
         (activity as MainActivity).title = MainActivity.HOME_TITLE
+    }
 
-        viewModel.setSearchString("friends")
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if(savedInstanceState == null){
+            initializeViews()
+            viewModel.setSearchString("friends")
+        }else{
+            initializeViews()
+        }
+    }
+
+    private fun initializeViews(){
         setHasOptionsMenu(true)
         rv_items.layoutManager = linearLayoutManager
         rv_items.setHasFixedSize(true)
@@ -82,7 +90,6 @@ class HomeFragment : BaseFragment<HomeViewModel>(), MovieSelectListener, Bookmar
         rv_bookmarks.adapter = bookmarkAdapter
         bookmarkAdapter.bookmarkListener = this
         bookmarkAdapter.movieSelectListener = this
-
     }
 
     override fun setupObservers() {
@@ -115,13 +122,27 @@ class HomeFragment : BaseFragment<HomeViewModel>(), MovieSelectListener, Bookmar
             when(it.status){
                 Status.LOADING ->{
                     progressBar.visibility = View.VISIBLE
+                    tv_status.visibility = View.GONE
                 }
                 Status.SUCCESS ->{
                     progressBar.visibility = View.GONE
+                    tv_status.visibility = View.GONE
                 }
                 Status.ERROR ->{
                     progressBar.visibility = View.GONE
                     Toaster.showLong(context!!, it.msg!!)
+                    tv_status.visibility = View.VISIBLE
+                    tv_status.text = it.msg
+                }
+                Status.NODATA ->{
+                    progressBar.visibility = View.GONE
+                    tv_status.visibility = View.VISIBLE
+                    tv_status.text = "No Records Found"
+                }
+                Status.REACHEND ->{
+                    progressBar.visibility = View.GONE
+                    tv_status.visibility = View.VISIBLE
+                    tv_status.text = "Reached end of data"
                 }
             }
         })

@@ -49,7 +49,8 @@ abstract class BaseFragment<VM : BaseViewModel> : Fragment() {
     }
 
 
-    fun showMessage(message: String) = context?.let { Toaster.showShort(it, message) }
+    fun showMessage(message: String) = context?.let { //Toaster.showShort(it, message)
+         }
 
 
     fun goBack() {

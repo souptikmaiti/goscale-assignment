@@ -17,8 +17,8 @@ class MainViewModel (schedulerProvider: RxSchedulerProviders,
         get() = _imdbId
 
     private val _imdbId: MutableLiveData<String> = MutableLiveData()
-    override fun onCreate() {
 
+    override fun onCreate() {
     }
 
     fun setMovieId(movieId: String){

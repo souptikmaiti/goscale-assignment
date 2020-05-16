@@ -18,8 +18,6 @@ class MainActivity : BaseActivity<MainViewModel>() {
         val DETAILS_TITLE = "Movie Details"
     }
 
-    private var activeFragmentt: Fragment? =null
-
     override fun provideLayoutId(): Int = R.layout.activity_main
 
     override fun injectDependencies(activityComponent: ActivityComponent) {
@@ -27,13 +25,9 @@ class MainActivity : BaseActivity<MainViewModel>() {
     }
 
     override fun setupView(savedInstanceState: Bundle?) {
-        addHomeFragment()
-    }
-
-    private fun addHomeFragment() {
-        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.fragment_container, HomeFragment.newInstance(null), HomeFragment.TAG)
-        fragmentTransaction.commit()
+        if(savedInstanceState == null) {
+            addHomeFragment()
+        }
     }
 
     override fun setupObservers() {
@@ -43,17 +37,42 @@ class MainActivity : BaseActivity<MainViewModel>() {
         })
     }
 
+    private fun addHomeFragment() {
+        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+        var homeFrag = supportFragmentManager.findFragmentByTag(HomeFragment.TAG) as HomeFragment?
+        var detailfrag = supportFragmentManager.findFragmentByTag(DetailsFragment.TAG) as DetailsFragment?
+        if(detailfrag != null){
+            fragmentTransaction.hide(detailfrag)
+        }
+        if(homeFrag == null) {
+            homeFrag = HomeFragment.newInstance(null)
+            fragmentTransaction.add(
+                R.id.fragment_container,homeFrag,
+                HomeFragment.TAG
+            )
+        }
+        fragmentTransaction.commit()
+    }
+
     private fun addDetailFragment(movieId: String?) {
         Log.d("Mytag", movieId)
-        val bundle = Bundle()
-        bundle.putString(IMDB_ID, movieId)
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.fragment_container, DetailsFragment.newInstance(bundle), DetailsFragment.TAG)
-        val homeFrag = supportFragmentManager.findFragmentByTag(HomeFragment.TAG) as HomeFragment?
-        if(homeFrag !=null){
+        var detailFrag = supportFragmentManager.findFragmentByTag(DetailsFragment.TAG) as DetailsFragment?
+        var homeFrag = supportFragmentManager.findFragmentByTag(HomeFragment.TAG) as HomeFragment?
+        if (homeFrag != null) {
             fragmentTransaction.hide(homeFrag)
         }
-        fragmentTransaction.addToBackStack("stack")
+        if (detailFrag != null){
+            fragmentTransaction.show(detailFrag)
+        }
+        if (detailFrag == null){
+            val bundle = Bundle()
+            bundle.putString(IMDB_ID, movieId)
+            detailFrag = DetailsFragment.newInstance(bundle)
+            fragmentTransaction.add(R.id.fragment_container, detailFrag, DetailsFragment.TAG)
+            fragmentTransaction.addToBackStack("stack")
+        }
+
         fragmentTransaction.commit()
     }
 
